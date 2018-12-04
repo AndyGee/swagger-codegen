@@ -39,6 +39,20 @@ public class GeneratorControllerIT {
         JsonNode jsonNode = Json.mapper().readTree(json);
         Assert.assertTrue(jsonNode.isArray());
         Assert.assertTrue(jsonNode.toString().contains("java"));
+        Assert.assertTrue(jsonNode.toString().contains("html"));
+    }
+
+    @Test
+    public void testDocumentationV3() throws Exception {
+        final HttpResponse response = client.execute(new HttpGet(DEFAULT_HOST + "/documentation?version=V3"));
+        int responseCode = response.getStatusLine().getStatusCode();
+        Assert.assertEquals(responseCode, 200);
+
+        String json = IOUtils.toString(response.getEntity().getContent());
+        JsonNode jsonNode = Json.mapper().readTree(json);
+        Assert.assertTrue(jsonNode.isArray());
+        Assert.assertTrue(jsonNode.toString().contains("html"));
+        Assert.assertFalse(jsonNode.toString().contains("java"));
     }
 
     @Test
@@ -51,7 +65,34 @@ public class GeneratorControllerIT {
         JsonNode jsonNode = Json.mapper().readTree(json);
         Assert.assertTrue(jsonNode.isArray());
         Assert.assertTrue(jsonNode.toString().contains("java"));
+        Assert.assertTrue(jsonNode.toString().contains("html"));
     }
+
+    @Test
+    public void testClientsV2NoDocs() throws Exception {
+        final HttpResponse response = client.execute(new HttpGet(DEFAULT_HOST + "/clients?version=V2&clientOnly=true"));
+        int responseCode = response.getStatusLine().getStatusCode();
+        Assert.assertEquals(responseCode, 200);
+
+        String json = IOUtils.toString(response.getEntity().getContent());
+        JsonNode jsonNode = Json.mapper().readTree(json);
+        Assert.assertTrue(jsonNode.isArray());
+        Assert.assertTrue(jsonNode.toString().contains("java"));
+        Assert.assertFalse(jsonNode.toString().contains("html"));
+    }
+
+    @Test
+    public void testDocumentationV2() throws Exception {
+        final HttpResponse response = client.execute(new HttpGet(DEFAULT_HOST + "/documentation?version=V2"));
+        int responseCode = response.getStatusLine().getStatusCode();
+        Assert.assertEquals(responseCode, 200);
+
+        String json = IOUtils.toString(response.getEntity().getContent());
+        JsonNode jsonNode = Json.mapper().readTree(json);
+        Assert.assertTrue(jsonNode.isArray());
+        Assert.assertTrue(jsonNode.toString().contains("html"));
+    }
+
     @Test
     public void testServersV3() throws Exception {
         final HttpResponse response = client.execute(new HttpGet(DEFAULT_HOST + "/servers?version=V3"));
@@ -62,6 +103,7 @@ public class GeneratorControllerIT {
         JsonNode jsonNode = Json.mapper().readTree(json);
         Assert.assertTrue(jsonNode.isArray());
         Assert.assertTrue(jsonNode.toString().contains("jaxrs-jersey"));
+        Assert.assertFalse(jsonNode.toString().contains("html"));
     }
 
     @Test
@@ -74,6 +116,47 @@ public class GeneratorControllerIT {
         JsonNode jsonNode = Json.mapper().readTree(json);
         Assert.assertTrue(jsonNode.isArray());
         Assert.assertTrue(jsonNode.toString().contains("jaxrs"));
+        Assert.assertFalse(jsonNode.toString().contains("html"));
+    }
+
+    @Test
+    public void testTypeV2() throws Exception {
+        final HttpResponse response = client.execute(new HttpGet(DEFAULT_HOST + "/server/V2"));
+        int responseCode = response.getStatusLine().getStatusCode();
+        Assert.assertEquals(responseCode, 200);
+
+        String json = IOUtils.toString(response.getEntity().getContent());
+        JsonNode jsonNode = Json.mapper().readTree(json);
+        Assert.assertTrue(jsonNode.isArray());
+        Assert.assertTrue(jsonNode.toString().contains("jaxrs"));
+        Assert.assertFalse(jsonNode.toString().contains("html"));
+    }
+
+    @Test
+    public void testTypeV3() throws Exception {
+        final HttpResponse response = client.execute(new HttpGet(DEFAULT_HOST + "/server/V3"));
+        int responseCode = response.getStatusLine().getStatusCode();
+        Assert.assertEquals(responseCode, 200);
+
+        String json = IOUtils.toString(response.getEntity().getContent());
+        JsonNode jsonNode = Json.mapper().readTree(json);
+        Assert.assertTrue(jsonNode.isArray());
+        Assert.assertTrue(jsonNode.toString().contains("jaxrs-jersey"));
+        Assert.assertFalse(jsonNode.toString().contains("html"));
+    }
+
+    @Test
+    public void testMultiTypesV2() throws Exception {
+        final HttpResponse response = client.execute(new HttpGet(DEFAULT_HOST + "/types?version=V2&types=client,documentation"));
+        int responseCode = response.getStatusLine().getStatusCode();
+        Assert.assertEquals(responseCode, 200);
+
+        String json = IOUtils.toString(response.getEntity().getContent());
+        JsonNode jsonNode = Json.mapper().readTree(json);
+        Assert.assertTrue(jsonNode.isArray());
+        Assert.assertTrue(jsonNode.toString().contains("java"));
+        Assert.assertTrue(jsonNode.toString().contains("html"));
+        Assert.assertFalse(jsonNode.toString().contains("nodejs-server"));
     }
 
     @Test
